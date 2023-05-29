@@ -9,13 +9,15 @@ import ClassicEditorBase from '@ckeditor/ckeditor5-editor-classic/src/classicedi
 import { Essentials } from '@ckeditor/ckeditor5-essentials';
 import { UploadAdapter } from '@ckeditor/ckeditor5-adapter-ckfinder';
 import { Autoformat } from '@ckeditor/ckeditor5-autoformat';
-import { Bold, Italic } from '@ckeditor/ckeditor5-basic-styles';
+import { Bold, Italic, Subscript, Superscript, Underline } from '@ckeditor/ckeditor5-basic-styles';
 import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
 import { CKBox } from '@ckeditor/ckeditor5-ckbox';
 import { CKFinder } from '@ckeditor/ckeditor5-ckfinder';
 import { EasyImage } from '@ckeditor/ckeditor5-easy-image';
 import { Heading } from '@ckeditor/ckeditor5-heading';
-import { Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload, PictureEditing } from '@ckeditor/ckeditor5-image';
+import Base64UploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter';
+import { Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload, PictureEditing,
+	ImageResizeEditing, ImageResizeHandles } from '@ckeditor/ckeditor5-image';
 import { Indent } from '@ckeditor/ckeditor5-indent';
 import { Link } from '@ckeditor/ckeditor5-link';
 import { List } from '@ckeditor/ckeditor5-list';
@@ -25,6 +27,9 @@ import { PasteFromOffice } from '@ckeditor/ckeditor5-paste-from-office';
 import { Table, TableToolbar } from '@ckeditor/ckeditor5-table';
 import { TextTransformation } from '@ckeditor/ckeditor5-typing';
 import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
+import { Alignment } from '@ckeditor/ckeditor5-alignment/src/index';
+import { FontFamily, FontColor, FontBackgroundColor } from '@ckeditor/ckeditor5-font/src/index';
+import { SpecialCharacters, SpecialCharactersEssentials } from '@ckeditor/ckeditor5-special-characters';
 
 export default class ClassicEditor extends ClassicEditorBase {
 	public static override builtinPlugins = [
@@ -33,6 +38,7 @@ export default class ClassicEditor extends ClassicEditorBase {
 		Autoformat,
 		Bold,
 		Italic,
+		Subscript, Superscript, Underline,
 		BlockQuote,
 		CKBox,
 		CKFinder,
@@ -53,17 +59,33 @@ export default class ClassicEditor extends ClassicEditorBase {
 		PictureEditing,
 		Table,
 		TableToolbar,
-		TextTransformation
+		TextTransformation,
+		Base64UploadAdapter,
+		Alignment,
+		FontFamily,
+		FontColor,
+		FontBackgroundColor,
+		ImageResizeEditing,
+		ImageResizeHandles,
+		SpecialCharacters,
+		SpecialCharactersEssentials
 	];
 
 	public static override defaultConfig = {
 		toolbar: {
 			items: [
-				'undo', 'redo',
-				'|', 'heading',
-				'|', 'bold', 'italic',
-				'|', 'link', 'uploadImage', 'insertTable', 'blockQuote', 'mediaEmbed',
-				'|', 'bulletedList', 'numberedList', 'outdent', 'indent'
+				'heading', 'alignment:left', 'alignment:right', 'alignment:center', 'alignment:justify',
+				'|', 'bold', 'italic', 'subscript', 'superscript', 'underline', 'fontFamily', 'fontColor', 'fontBackgroundColor',
+				'|', 'uploadImage', 'insertTable',
+				'|', 'bulletedList', 'numberedList', 'outdent', 'indent',
+				'specialCharacters'
+			]
+		},
+		fontFamily: {
+			options: [
+				'default',
+				'Ubuntu, Arial, sans-serif',
+				'Ubuntu Mono, Courier New, Courier, monospace'
 			]
 		},
 		image: {
@@ -73,7 +95,25 @@ export default class ClassicEditor extends ClassicEditorBase {
 				'imageStyle:side',
 				'|',
 				'toggleImageCaption',
-				'imageTextAlternative'
+				'imageTextAlternative',
+				'resizeImage'
+			],
+			resizeOptions: [
+				{
+					name: 'resizeImage:original',
+					value: null,
+					label: 'Original'
+				},
+				{
+					name: 'resizeImage:40',
+					value: '40',
+					label: '40%'
+				},
+				{
+					name: 'resizeImage:60',
+					value: '60',
+					label: '60%'
+				}
 			]
 		},
 		table: {
@@ -83,7 +123,6 @@ export default class ClassicEditor extends ClassicEditorBase {
 				'mergeTableCells'
 			]
 		},
-		// This value must be kept in sync with the language defined in webpack.config.js.
 		language: 'en'
 	};
 }
